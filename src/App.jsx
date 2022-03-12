@@ -1,35 +1,28 @@
-import { Routes,Route,Link,NavLink,Outlet} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Routes,Route} from 'react-router-dom';
+import { Layout } from "./layout/Layout";
+import { Posts } from "./pages/Posts";
 import { Home } from "./pages/Home";
-import { About } from "./pages/About";
-import { Settings } from "./pages/Settings";
-import { Users } from "./pages/Users";
-import { Profile } from "./pages/Profile";
 
 function App() {
+
+  const[posts, setPosts] = useState([])
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/posts')
+   .then(response => setPosts(response))
+   .then(json=> setPosts(json))
+  },[])
+
+
   return (
       <div className="app">
-        <ul className="app-list">
-          <li className="app-list__item">
-            <NavLink className="item-link" to='/'>Home</NavLink>
-          </li>
-          <li>
-            <NavLink className="item-link" to='/about'>About</NavLink>
-          </li>
-          <li>
-            <NavLink className="item-link"  to='/settings'>Settings</NavLink>
-          </li>
-        </ul>
-
-        <div>
-          <Routes>
-            <Route index element={<Home/>}/>
-            <Route path="/about" element={<About/>}/>
-            <Route path="/settings" element={<Settings/>}>
-              <Route index element={<Users/>}/>
-              <Route path="profile" element={<Profile/>}/>
-            </Route>
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<Layout/>}>
+            <Route index element={<Home posts={posts}/>}>
+            <Route path="posts" element={<Posts/>}/>
+          </Route>
+        </Routes>
       </div>
   );
 }
