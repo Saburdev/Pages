@@ -1,29 +1,36 @@
-import { useEffect, useState } from "react";
-import { Routes,Route} from 'react-router-dom';
-import { Layout } from "./layout/Layout";
-import { Posts } from "./pages/Posts";
-import { Home } from "./pages/Home";
+import { useEffect, useState } from 'react';
+import { Layout } from './layout/Layout';
+import {Routes,Route,Navigate} from "react-router-dom"
+import {Home} from './pages/Home'
+import {Posts} from './pages/Posts'
+import {Overview} from './pages/Overview'
+
 
 function App() {
 
-  const[posts, setPosts] = useState([])
+ const [posts,setPosts] = useState([])
+
 
   useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/posts')
-   .then(response => setPosts(response))
-   .then(json=> setPosts(json))
+    .then(response => response.json())
+  .then(json => {
+    setTimeout(() => {
+      setPosts(json)
+    },1500)  
+    })
   },[])
-
-
   return (
-      <div className="app">
-        <Routes>
-          <Route path="/" element={<Layout/>}>
-            <Route index element={<Home posts={posts}/>}>
-            <Route path="posts" element={<Posts/>}/>
-          </Route>
-        </Routes>
-      </div>
+    <div className="App">
+      <Routes>
+        <Route path='/' element={<Layout/>}>
+          <Route index element={<Home posts={posts}/>}/>
+          <Route path='posts' element={<Posts posts={posts}/>}/>  
+          <Route path='overview/:id' element={<Overview posts={posts}/>}/>
+        </Route>
+        <Route path='*' element={<Navigate to="/"/>}/>
+      </Routes>
+    </div>
   );
 }
 
